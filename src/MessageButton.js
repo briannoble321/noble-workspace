@@ -5,8 +5,7 @@ import { useSnackbar } from "notistack";
 import {
   openSnackbarMessage,
   setSnackbarProviderContext,
-  getSnackBarProps,
-  setSnackBarProps
+  messageTypes
 } from "/src/CustomSnackbarMessage";
 
 const styles = {
@@ -41,49 +40,41 @@ const styles = {
 };
 
 const buttons = [
-  { variant: "success", message: "Successfully done the operation." },
-  { variant: "error", message: "Something went wrong." },
-  { variant: "warning", message: "Something could go wrong" },
-  { variant: "info", message: "For your info..." },
-  { variant: "default", message: "I am default..." }
+  {
+    variant: messageTypes.SUCCESS,
+    message: "Successfully done the operation."
+  },
+  { variant: messageTypes.ERROR, message: "Something went wrong." },
+  { variant: messageTypes.WARNING, message: "Something could go wrong" },
+  { variant: messageTypes.INFO, message: "For your info..." },
+  { variant: messageTypes.DEFAULT, message: "I am default..." }
 ];
 
 const MessageButtons = () => {
   setSnackbarProviderContext(useSnackbar());
 
-  const snackBarProps = getSnackBarProps();
-
   const handleClick = useCallback(
     (button) => () => {
-      snackBarProps.message = button.message;
-      snackBarProps.messageType = button.variant;
-      snackBarProps.button1Label = undefined;
-      snackBarProps.button2Label = undefined;
-      setSnackBarProps(snackBarProps);
-      openSnackbarMessage();
+      const props = { message: button.message, messageType: button.variant };
+
+      openSnackbarMessage(props);
     },
-    [snackBarProps]
+    []
   );
 
-  const myButtonCallback = (buttonName) => {
-    if (buttonName === "Cancel") {
-      alert("Cancel Pressed");
-      //do some stuff
-    }
-    if (buttonName === "Proceed") {
-      alert("Proceed Pressed");
-      //do some stuff
-    }
-  };
-
+  // 2 buttons and callback
   const handleClickWithAction = () => {
-    snackBarProps.message = "I am a warning with buttons";
-    snackBarProps.messageType = "warning";
-    snackBarProps.button1Label = "Cancel";
-    snackBarProps.button2Label = "Proceed";
-    snackBarProps.buttonCallback = myButtonCallback;
-    setSnackBarProps(snackBarProps);
-    openSnackbarMessage();
+    const props = {
+      message: "I am a warning with buttons",
+      messageType: messageTypes.WARNING,
+      button1Label: "Cancel",
+      button2Label: "Proceed",
+      buttonCallback: (buttonName) => {
+        alert(buttonName + " pressed");
+      }
+    };
+
+    openSnackbarMessage(props);
   };
 
   return (
